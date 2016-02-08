@@ -239,6 +239,63 @@ namespace DapperIdentity.Data.Repositories
             return Task.FromResult(user.SecurityStamp);
         }
 
+
+        public Task AddToRoleAsync(T user, string roleName)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(roleName))
+            {
+                throw new ArgumentException("Argument cannot be null or empty: roleName.");
+            }
+
+//            var roleId = _roleTable.GetRoleId(roleName);
+//            if (roleId > 0)
+//            {
+//                _userRolesTable.AddUserToRoleAsync(user, roleId);
+//
+//            }
+            return Task.FromResult<object>(null);
+        }
+
+        public async Task<IList<string>> GetRolesAsync(T user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+           // var roles = await _userRolesTable.GetUserRolesByUserId(user.Id);
+            //return roles;
+                    return null;
+        }
+
+        public async Task<bool> IsInRoleAsync(T user, string role)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(role))
+            {
+                throw new ArgumentNullException(nameof(role));
+            }
+//
+//            var roles = await _userRolesTable.GetUserRolesByUserId(user.Id); 
+//            return roles != null && roles.Contains(role);
+            return false;
+        }
+
+        public Task RemoveFromRoleAsync(T user, string role)
+        {
+            throw new NotImplementedException();
+        }
+
+
         public void Dispose()
         {
         }

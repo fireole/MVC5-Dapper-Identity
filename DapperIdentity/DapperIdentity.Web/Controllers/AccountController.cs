@@ -46,7 +46,8 @@ namespace DapperIdentity.Web.Controllers
                 var user = await _userManager.FindAsync(model.Email.TrimEnd(), model.Password);
                 if (user != null)
                 {
-                    //Check if the account has already had its email confirmed.  In this example, the account will always be confirmed, but this is here for demonstration purposes.
+                    //Check if the account has already had its email confirmed.  
+                    // In this example, the account will always be confirmed, but this is here for demonstration purposes.
                     if (!user.IsConfirmed)
                     {
                         //Check to see if the token is greater than 24 hours old
@@ -91,13 +92,15 @@ namespace DapperIdentity.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                //Generate a new confirmation token.  Here we are just storing a Guid as a string, but feel free to use whatever you want (if you use another type, make sure to update the user object
+                //Generate a new confirmation token.  Here we are just storing a Guid as a string, but feel free to use whatever you want 
+                // (if you use another type, make sure to update the user object
                 //and the user table accordingly).
                 var confirmationToken = Guid.NewGuid().ToString();
 
                 //Create the User object.  If you have customized this beyond this example, make sure you update this to contain your new fields.  
                 //The confirmation token in our example is ultimately for show.  Make sure to modify the RegisterViewModel and the Register view if you have customized the object.
-                var user = new User { UserName = model.Email.TrimEnd(), Nickname = model.Nickname.TrimEnd(), IsConfirmed = true, ConfirmationToken = confirmationToken, CreatedDate = DateTime.UtcNow };
+                var user = new User { UserName = model.Email.TrimEnd(), Nickname = model.Nickname.TrimEnd(), IsConfirmed = true,
+                    ConfirmationToken = confirmationToken, CreatedDate = DateTime.UtcNow };
 
                 //Create the user
                 var result = await _userManager.CreateAsync(user, model.Password);

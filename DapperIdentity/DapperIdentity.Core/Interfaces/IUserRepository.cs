@@ -12,6 +12,7 @@ namespace DapperIdentity.Core.Interfaces
         IUserStore<T, int>,
         IUserLoginStore<T, int>,
         IUserPasswordStore<T, int>,
+        IUserRoleStore<T, int>,
         IUserSecurityStampStore<T, int> where T : User
     {
     }
