@@ -10,16 +10,13 @@ using Microsoft.Owin.Security;
 namespace DapperIdentity.Web.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : BaseController
     {
-        private readonly UserManager<User> _userManager;
-
-        public ManageController(UserManager<User> userManager)
+        public ManageController(UserManager<User, int> userManager) : base(userManager)
         {
-            _userManager = userManager;
         }
 
-       //
+        //
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
@@ -36,7 +33,7 @@ namespace DapperIdentity.Web.Controllers
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
-                Logins = await _userManager.GetLoginsAsync(userId),
+                Logins = await _userManager.GetLoginsAsync(int.Parse(userId)),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
             return View(model);
@@ -59,10 +56,10 @@ namespace DapperIdentity.Web.Controllers
             {
                 return View(model);
             }
-            var result = await _userManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+            var result = await _userManager.ChangePasswordAsync(User.Identity.GetUserId<int>(), model.OldPassword, model.NewPassword);
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+                var user = await _userManager.FindByIdAsync(User.Identity.GetUserId<int>());
                 if (user != null)
                 {
                     await SignInAsync(user, false);
@@ -88,10 +85,10 @@ namespace DapperIdentity.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _userManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+                var result = await _userManager.AddPasswordAsync(User.Identity.GetUserId<int>(), model.NewPassword);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+                    var user = await _userManager.FindByIdAsync(User.Identity.GetUserId<int>());
                     if (user != null)
                     {
                         await SignInAsync(user, false);
@@ -113,12 +110,12 @@ namespace DapperIdentity.Web.Controllers
                 message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : "";
-            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+            var user = await _userManager.FindByIdAsync(User.Identity.GetUserId<int>());
             if (user == null)
             {
                 return View("Error");
             }
-            var userLogins = await _userManager.GetLoginsAsync(User.Identity.GetUserId());
+            var userLogins = await _userManager.GetLoginsAsync(User.Identity.GetUserId<int>());
             var otherLogins = AuthenticationManager.GetExternalAuthenticationTypes().Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider)).ToList();
             ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
             return View(new ManageLoginsViewModel
@@ -135,10 +132,10 @@ namespace DapperIdentity.Web.Controllers
         public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
         {
             ManageMessageId? message;
-            var result = await _userManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
+            var result = await _userManager.RemoveLoginAsync(User.Identity.GetUserId<int>(), new UserLoginInfo(loginProvider, providerKey));
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByIdAsync(User.Identity.GetUserId());
+                var user = await _userManager.FindByIdAsync(User.Identity.GetUserId<int>());
                 if (user != null)
                 {
                     await SignInAsync(user, false);
@@ -171,7 +168,7 @@ namespace DapperIdentity.Web.Controllers
             {
                 return RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
             }
-            var result = await _userManager.AddLoginAsync(User.Identity.GetUserId(), loginInfo.Login);
+            var result = await _userManager.AddLoginAsync(User.Identity.GetUserId<int>(), loginInfo.Login);
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
         }
 
@@ -201,7 +198,7 @@ namespace DapperIdentity.Web.Controllers
 
         private bool HasPassword()
         {
-            var user = _userManager.FindById(User.Identity.GetUserId());
+            var user = _userManager.FindById(User.Identity.GetUserId<int>());
             return user?.PasswordHash != null;
         }
 
@@ -224,5 +221,7 @@ namespace DapperIdentity.Web.Controllers
         }
 
         #endregion
+
+
     }
 }

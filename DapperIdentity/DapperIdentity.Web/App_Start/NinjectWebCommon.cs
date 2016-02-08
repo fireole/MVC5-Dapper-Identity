@@ -16,20 +16,20 @@ using Ninject.Web.Common;
 
 namespace DapperIdentity.Web
 {
-    public static class NinjectWebCommon 
+    public static class NinjectWebCommon
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
 
         /// <summary>
         /// Starts the application
         /// </summary>
-        public static void Start() 
+        public static void Start()
         {
             DynamicModuleUtility.RegisterModule(typeof(OnePerRequestHttpModule));
             DynamicModuleUtility.RegisterModule(typeof(NinjectHttpModule));
             bootstrapper.Initialize(CreateKernel);
         }
-        
+
         /// <summary>
         /// Stops the application.
         /// </summary>
@@ -37,7 +37,7 @@ namespace DapperIdentity.Web
         {
             bootstrapper.ShutDown();
         }
-        
+
         /// <summary>
         /// Creates the kernel that will manage your application.
         /// </summary>
@@ -67,12 +67,12 @@ namespace DapperIdentity.Web
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<IConnectionFactory>().To<SqlConnectionFactory>().WithConstructorArgument("connectionString", ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            kernel.Bind<IUserRepository>().To<UserRepository>();
-            kernel.Bind<IUserStore<User>>().To<UserRepository>();
-            kernel.Bind<IUserLoginStore<User>>().To<UserRepository>();
-            kernel.Bind<IUserPasswordStore<User>>().To<UserRepository>();
-            kernel.Bind<IUserSecurityStampStore<User>>().To<UserRepository>();
+            kernel.Bind<IUserRepository<User>>().To<UserRepository<User>>();
+            kernel.Bind<IUserStore<User, int>>().To<UserRepository<User>>();
+            kernel.Bind<IUserLoginStore<User, int>>().To<UserRepository<User>>();
+            kernel.Bind<IUserPasswordStore<User, int>>().To<UserRepository<User>>();
+            kernel.Bind<IUserSecurityStampStore<User, int>>().To<UserRepository<User>>();
             kernel.Bind(typeof(UserManager<>)).ToSelf();
-        }        
+        }
     }
 }

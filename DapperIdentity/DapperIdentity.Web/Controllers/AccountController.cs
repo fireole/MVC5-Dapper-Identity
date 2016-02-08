@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using DapperIdentity.Core.Entities;
 using DapperIdentity.Web.Email;
 using Microsoft.AspNet.Identity;
@@ -15,14 +17,12 @@ using ResetPasswordViewModel = DapperIdentity.Web.ViewModels.ResetPasswordViewMo
 namespace DapperIdentity.Web.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
-        private readonly UserManager<User> _userManager;
-
-        public AccountController(UserManager<User> userManager)
+        public AccountController(UserManager<User, int> userManager) : base(userManager)
         {
-            _userManager = userManager;
         }
+
 
         //
         // GET: /Account/Login

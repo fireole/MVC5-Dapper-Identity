@@ -7,9 +7,10 @@ namespace DapperIdentity.Core.Entities
     /// Custom fields for your user object.  Id, UserName, PasswordHash and SecurityStamp are all required by Identity.
     /// TODO:  Add your own custom fields.  Don't forget to update the database table and your SQL queries in the user repository
     /// </summary>
-    public class User : IUser
+    public class User : IUser<int>
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
+        //public string Id { get; set; }
         public string UserName { get; set; }
         public string Nickname { get; set; }
         public string PasswordHash { get; set; }

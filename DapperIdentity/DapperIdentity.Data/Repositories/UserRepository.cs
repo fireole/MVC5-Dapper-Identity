@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Dapper;
 using DapperIdentity.Core.Entities;
@@ -9,7 +10,7 @@ using Microsoft.AspNet.Identity;
 
 namespace DapperIdentity.Data.Repositories
 {
-    public class UserRepository : BaseRepository, IUserRepository
+    public class UserRepository<T> : BaseRepository, IUserRepository<T> where T : User
     {
         /// <summary>
         /// User Repository constructor passing injected connection factory to the Base Repository
@@ -17,6 +18,7 @@ namespace DapperIdentity.Data.Repositories
         /// <param name="connectionFactory">The injected connection factory.  It is injected with the constructor argument that is the connection string.</param>
         public UserRepository(IConnectionFactory connectionFactory) : base(connectionFactory)
         {
+
         }
 
         /// <summary>
@@ -24,12 +26,14 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="user">The User object must be passed in.  We create this during the Register Action.</param>
         /// <returns>Returns a 0 or 1 depending on whether operation is successful or not.</returns>
-        public async Task CreateAsync(User user)
+        public async Task CreateAsync(T user)
         {
             await WithConnection(async connection =>
             {
-                string query = "INSERT INTO Users(Id,UserName,Nickname,PasswordHash,SecurityStamp,IsConfirmed,ConfirmationToken,CreatedDate) VALUES(@Id,@UserName,@Nickname,@PasswordHash,@SecurityStamp,@IsConfirmed,@ConfirmationToken,@CreatedDate)";
-                user.Id = Guid.NewGuid().ToString();
+                string query = "INSERT INTO Users(" +
+                               "Id,UserName,Nickname,PasswordHash,SecurityStamp,IsConfirmed,ConfirmationToken,CreatedDate) " +
+                               "VALUES(@Id,@UserName,@Nickname,@PasswordHash,@SecurityStamp,@IsConfirmed,@ConfirmationToken,@CreatedDate)";
+                //user.Id = Guid.NewGuid().ToString();
                 return await connection.ExecuteAsync(query, user);
             });
         }
@@ -39,7 +43,7 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="user">The User object</param>
         /// <returns>Returns a 0 or 1 depending on whether operation is successful or not.</returns>
-        public async Task DeleteAsync(User user)
+        public async Task DeleteAsync(T user)
         {
             await WithConnection(async connection =>
             {
@@ -53,12 +57,12 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="userId">The Id of the user object.</param>
         /// <returns>Returns the User object for the supplied Id or null.</returns>
-        public async Task<User> FindByIdAsync(string userId)
+        public async Task<T> FindByIdAsync(int userId)
         {
             return await WithConnection(async connection =>
             {
                 string query = "SELECT * FROM Users WHERE Id=@Id";
-                var user = await connection.QueryAsync<User>(query, new { @Id = userId });
+                var user = await connection.QueryAsync<T>(query, new { @Id = userId });
                 return user.SingleOrDefault();
             });
         }
@@ -68,12 +72,12 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="userName">The username of the user object.</param>
         /// <returns>Returns the User object for the supplied username or null.</returns>
-        public async Task<User> FindByNameAsync(string userName)
+        public async Task<T> FindByNameAsync(string userName)
         {
             return await WithConnection(async connection =>
             {
                 string query = "SELECT * FROM Users WHERE LOWER(UserName)=LOWER(@UserName)";
-                var user = await connection.QueryAsync<User>(query, new { @UserName = userName });
+                var user = await connection.QueryAsync<T>(query, new { @UserName = userName });
                 return user.SingleOrDefault();
             });
         }
@@ -83,7 +87,7 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="user">The user that will be updated.  The updated values must be passed in to this method.</param>
         /// <returns>Returns a 0 or 1 depending on whether operation is successful or not.</returns>
-        public async Task UpdateAsync(User user)
+        public async Task UpdateAsync(T user)
         {
             await WithConnection(async connection =>
             {
@@ -99,7 +103,7 @@ namespace DapperIdentity.Data.Repositories
         /// <param name="user">The User object that will be associated with the external login information.</param>
         /// <param name="login">The user login information.  This object is constructed during the callback from the external authority.</param>
         /// <returns>Returns a 0 or 1 depending on whether operation is successful or not.</returns>
-        public async Task AddLoginAsync(User user, UserLoginInfo login)
+        public async Task AddLoginAsync(T user, UserLoginInfo login)
         {
             await WithConnection(async connection =>
             {
@@ -124,7 +128,7 @@ namespace DapperIdentity.Data.Repositories
         /// <param name="user">The user object that the external login will be removed from.</param>
         /// <param name="login">The external login that will be removed from the user account.</param>
         /// <returns>Returns a 0 or 1 depending on whether operation is successful or not.</returns>
-        public async Task RemoveLoginAsync(User user, UserLoginInfo login)
+        public async Task RemoveLoginAsync(T user, UserLoginInfo login)
         {
             await WithConnection(async connection =>
             {
@@ -138,7 +142,7 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="user">The user account to get external login information for.</param>
         /// <returns>List of UserLoginInfo objects that contain external login information for each associated external account.</returns>
-        public async Task<IList<UserLoginInfo>> GetLoginsAsync(User user)
+        public async Task<IList<UserLoginInfo>> GetLoginsAsync(T user)
         {
             return await WithConnection(async connection =>
             {
@@ -153,7 +157,7 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="login">The external account</param>
         /// <returns>The User associated with the external account or null</returns>
-        public async Task<User> FindAsync(UserLoginInfo login)
+        public async Task<T> FindAsync(UserLoginInfo login)
         {
             await WithConnection(async connection =>
             {
@@ -171,7 +175,7 @@ namespace DapperIdentity.Data.Repositories
         /// <param name="user">The user to has the password for.</param>
         /// <param name="passwordHash">The password has to use.</param>
         /// <returns></returns>
-        public Task SetPasswordHashAsync(User user, string passwordHash)
+        public Task SetPasswordHashAsync(T user, string passwordHash)
         {
             if (user == null)
             {
@@ -186,7 +190,7 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="user">The user to get the password hash for.</param>
         /// <returns>The password hash.</returns>
-        public Task<string> GetPasswordHashAsync(User user)
+        public Task<string> GetPasswordHashAsync(T user)
         {
             if (user == null)
             {
@@ -200,7 +204,7 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="user">The user to check for an existing password hash.</param>
         /// <returns>True of false depending on whether the password hash exists or not.</returns>
-        public Task<bool> HasPasswordAsync(User user)
+        public Task<bool> HasPasswordAsync(T user)
         {
             return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
         }
@@ -211,7 +215,7 @@ namespace DapperIdentity.Data.Repositories
         /// <param name="user">The user to set the security stamp for.</param>
         /// <param name="stamp">The stamp to set.</param>
         /// <returns></returns>
-        public Task SetSecurityStampAsync(User user, string stamp)
+        public Task SetSecurityStampAsync(T user, string stamp)
         {
             if (user == null)
             {
@@ -226,7 +230,7 @@ namespace DapperIdentity.Data.Repositories
         /// </summary>
         /// <param name="user">The user to get the security stamp for.</param>
         /// <returns>The security stamp.</returns>
-        public Task<string> GetSecurityStampAsync(User user)
+        public Task<string> GetSecurityStampAsync(T user)
         {
             if (user == null)
             {
