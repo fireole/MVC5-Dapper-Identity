@@ -109,13 +109,12 @@ namespace DapperIdentity.Data.Repositories
             await WithConnection(async connection =>
             {
                 string query =
-                    "INSERT INTO ExternalLogins(ExternalLoginId, UserId, LoginProvider, ProviderKey) VALUES(@externalLoginId, @userId, @loginProvider, @providerKey)";
+                    "INSERT INTO ExternalLogins(UserId, LoginProvider, ProviderKey) VALUES(@userId, @loginProvider, @providerKey)";
                 return
                     await
                         connection.ExecuteAsync(query,
                             new
                             {
-                                externalLoginId = Guid.NewGuid(),
                                 userId = user.Id,
                                 loginProvider = login.LoginProvider,
                                 providerKey = login.ProviderKey
@@ -133,7 +132,7 @@ namespace DapperIdentity.Data.Repositories
         {
             await WithConnection(async connection =>
             {
-                string query = "DELETE FROM ExternalLogins WHERE Id = @Id AND LoginProvider = @loginProvider AND ProviderKey = @providerKey";
+                string query = "DELETE FROM ExternalLogins WHERE UserId = @Id AND LoginProvider = @loginProvider AND ProviderKey = @providerKey";
                 return await connection.ExecuteAsync(query, new { user.Id, login.LoginProvider, login.ProviderKey });
             });
         }
