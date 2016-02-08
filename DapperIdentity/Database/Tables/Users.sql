@@ -1,16 +1,12 @@
-﻿SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[Users] (
-    [Id]				INT	IDENTITY(1,1) NOT NULL,
-    [UserName]          NVARCHAR (MAX) NOT NULL,
+﻿CREATE TABLE [dbo].[Users]
+(
+	[Id] INT NOT NULL  IDENTITY,
+	[UserName]          NVARCHAR (MAX) NOT NULL,
     [Nickname]          NVARCHAR (MAX) NOT NULL,
     [PasswordHash]      NVARCHAR (MAX) NULL,
     [SecurityStamp]     NVARCHAR (MAX) NULL,
     [IsConfirmed]       BIT            NOT NULL,
     [ConfirmationToken] NVARCHAR (MAX) NULL,
-    [CreatedDate]       DATETIME       NOT NULL
-);
+    [CreatedDate]       DATETIME       NOT NULL,
+	CONSTRAINT [PK_dbo.Users] PRIMARY KEY CLUSTERED ([Id] ASC)
+)

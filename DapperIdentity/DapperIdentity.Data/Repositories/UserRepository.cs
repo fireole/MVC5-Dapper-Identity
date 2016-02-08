@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Dapper;
 using DapperIdentity.Core.Entities;
@@ -31,10 +30,12 @@ namespace DapperIdentity.Data.Repositories
             await WithConnection(async connection =>
             {
                 string query = "INSERT INTO Users(" +
-                               "Id,UserName,Nickname,PasswordHash,SecurityStamp,IsConfirmed,ConfirmationToken,CreatedDate) " +
-                               "VALUES(@Id,@UserName,@Nickname,@PasswordHash,@SecurityStamp,@IsConfirmed,@ConfirmationToken,@CreatedDate)";
-                //user.Id = Guid.NewGuid().ToString();
-                return await connection.ExecuteAsync(query, user);
+                               "UserName,Nickname,PasswordHash,SecurityStamp,IsConfirmed,ConfirmationToken,CreatedDate) " +
+                               "VALUES(@UserName,@Nickname,@PasswordHash,@SecurityStamp,@IsConfirmed,@ConfirmationToken,@CreatedDate)" +
+                               "SELECT Cast(SCOPE_IDENTITY() as int)";
+               var results = await connection.ExecuteScalarAsync<int>(query, user);
+                user.Id = results;
+                return results;
             });
         }
 

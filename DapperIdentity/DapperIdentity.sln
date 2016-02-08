@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperIdentity.Core", "Dapp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperIdentity.Data", "DapperIdentity.Data\DapperIdentity.Data.csproj", "{CEE4C4CB-D031-4922-83DA-6388C9956BA4}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{E9C79FAA-DA8F-4474-87B6-430D54CAE200}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{CEE4C4CB-D031-4922-83DA-6388C9956BA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEE4C4CB-D031-4922-83DA-6388C9956BA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEE4C4CB-D031-4922-83DA-6388C9956BA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9C79FAA-DA8F-4474-87B6-430D54CAE200}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9C79FAA-DA8F-4474-87B6-430D54CAE200}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9C79FAA-DA8F-4474-87B6-430D54CAE200}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E9C79FAA-DA8F-4474-87B6-430D54CAE200}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9C79FAA-DA8F-4474-87B6-430D54CAE200}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9C79FAA-DA8F-4474-87B6-430D54CAE200}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
